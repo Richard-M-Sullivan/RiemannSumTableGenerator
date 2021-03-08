@@ -1,6 +1,7 @@
 import tkinter as tk
 import tkinter.messagebox
 from tkinter import ttk
+from math import *
 
 #setup application
 
@@ -14,7 +15,12 @@ class Application():
     def __init__(self,master,title):
         #initialize class memeber varables
         self.errorLog = "" 
-        self.table = ""
+        self.table = [] 
+        self.function = ""
+        self.n = ""
+        self.upper_bound = ""
+        self.lower_bound = ""
+        self.converted_function = ""
         
         #initialize gui and widgets
         self.root =  master
@@ -99,18 +105,39 @@ class Application():
         #enter the applicaiton main loop to start application
         tk.mainloop()
 
-    def calculateValues(self):
-        self.function = self.functionEntry.get()
-        self.n = self.nEntry.get()
-        self.upper_bound = self.upperBoundEntry.get()
-        self.lower_bound = self.lowerBoundEntry.get()
+    def calculateValues(self):#called by the submit button
+        #getting values from the fields
 
-        if self.checkValues():
-            self.generate_table()
+        #check if the values are new
+        function = self.functionEntry.get()
+        n = self.nEntry.get()
+        upper_bound = self.upperBoundEntry.get()
+        lower_bound = self.lowerBoundEntry.get()
+        
+        #if the values are the same do nothing
+        if (self.function == function and self.n == n 
+            and self.upper_bound == upper_bound
+            and self.lower_bound == lower_bound):
+            pass
+        #if the values are new then redo calculations
         else:
-            tk.messagebox.showinfo("Response",self.get_error_log())
+            self.function = function
+            self.n = n
+            self.upper_bound = upper_bound
+            self.lower_bound = lower_bound
+            #error checking
+            if self.checkValues():
+                #if no errors generate a new table to display
+                self.convert_function()
+                self.generate_table()
+                self.new_tableTree()
+            #if there is an error show the error log
+            else:
+                tk.messagebox.showinfo("Response",self.get_error_log())
+
 
     def checkValues(self):
+        #calls the check functions for the corresponding entry fields
         self.clear_error_log()
         good = 0 
         good += self.check_function()
@@ -121,6 +148,7 @@ class Application():
 
     def check_function(self):
         return 0
+
     def check_n(self):
         try:
             n = int(self.n)
@@ -175,8 +203,58 @@ class Application():
                     return 1
         return 0
 
+    def convert_function(self):
+        displacement = 0
+        function = self.function
+        for i in range(len(function)-1):
+            val1 = function[i+displacement]
+            val2 = function[i+displacement+1]
+            print(function,i,displacement,val1,val2)
+            op = self.generate_operator(val1,val2)
+
+            if not(op == ""):
+                function = function[0:i+displacement+1]+op+function[i+displacement+1:]
+                displacement += 1
+
+        converted_function = function
+                
+    def generate_operator(self,val1,val2):
+            #if the value is a number
+            if val1.isnumeric():
+                #return nothing if both numbers
+                if val2.isnumeric():
+                    return ""
+                #else you need to multiply
+                elif (val2 == "(" or val2 == "x"):
+                    return "*"
+                else:
+                    return""
+            #if the first value is a ) or x
+            elif val1 == ")" or val1 == "x":
+                #if the second value is not an operator then multiply
+                if val2.isnumeric() or val2=="(" or val2 =="x":
+                    return "*"
+                else:
+                    return ""
+            else:
+                return ""
+                
+            
+            
+
     def generate_table(self):
-        self.table = "hello table"
+        #the needed fields that the table has to generate are as follows:
+        # i, xi, f(xi), c, c(fxi), xm, f(xm)
+        self.table=[]
+        self.table.append([self.n,"xi","f(xi)","c","cf(xi)","xm","f(xm)"])
+         
+    def new_tableTree(self):
+        #clear the previous tree
+        for record in self.tableTree.get_children():
+            self.tableTree.delete(record)
+        #insert all the needed data into the new tree
+        for row in self.table:    
+            self.tableTree.insert(parent="",index="end",iid="0",values=row)
 
     def clear_error_log(self):
         self.error_log = ""
