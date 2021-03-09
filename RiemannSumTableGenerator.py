@@ -2,7 +2,6 @@ import tkinter as tk
 import tkinter.messagebox
 from tkinter import ttk
 from math import *
-
 #setup application
 
 class Application():
@@ -309,9 +308,9 @@ class Application():
 
     def generate_operator(self,val1,val2):
             #if the value is a number
-            if val1.isnumeric():
+            if val1.isdigit():#isnumeric
                 #return nothing if both numbers
-                if val2.isnumeric():
+                if val2.isdigit():#isnumeric
                     return ""
                 #else you need to multiply
                 elif (val2 == "(" or val2 == "x"):
@@ -323,7 +322,7 @@ class Application():
             #if the first value is a ) or x
             elif val1 == ")" or val1 == "x":
                 #if the second value is not an operator then multiply
-                if (val2.isnumeric() or val2=="(" or val2.isalpha()):
+                if (val2.isdigit() or val2=="(" or val2.isalpha()):#isnumeric
                     return "*"
                 else:
                     return ""
@@ -340,10 +339,12 @@ class Application():
         dx = (int(self.upper_bound) - int(self.lower_bound))/int(self.n)
         c = 0
         xm = 0
-        
+        xi = 0
+        xiOPERATOR = {"x":xi} 
+        xmOPERATOR = {"x":xm} 
         for i in range(int(self.n)+1):
             xi = i*dx+int(self.lower_bound) 
-            fxi = eval(self.converted_function,{"x":xi})
+            fxi = eval(self.converted_function,globals(),xiOPERATOR)
             if(int(self.n) % 2 == 0):
                 if i == 0 or i == int(self.n):
                     c = 1
@@ -353,7 +354,8 @@ class Application():
                     c = 4
             if i > 0:
                 xm = xi - dx/2
-            fxm = eval(self.converted_function,{"x":xm})
+            #fxm = eval(self.converted_function,{"x":xm})
+            fxm = eval(self.converted_function,globals(),xmOPERATOR)
 
             self.table.append([str(i),str(round(xi,6)),str(round(fxi,6)),str(c),
             str(round(c*fxi,6)),round(xm,6),str(round(fxm,6))])
