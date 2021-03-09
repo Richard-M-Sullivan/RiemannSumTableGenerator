@@ -308,9 +308,9 @@ class Application():
 
     def generate_operator(self,val1,val2):
             #if the value is a number
-            if val1.isdigit():#isnumeric
+            if val1.isdigit():
                 #return nothing if both numbers
-                if val2.isdigit():#isnumeric
+                if val2.isdigit():
                     return ""
                 #else you need to multiply
                 elif (val2 == "(" or val2 == "x"):
@@ -322,7 +322,7 @@ class Application():
             #if the first value is a ) or x
             elif val1 == ")" or val1 == "x":
                 #if the second value is not an operator then multiply
-                if (val2.isdigit() or val2=="(" or val2.isalpha()):#isnumeric
+                if (val2.isdigit() or val2=="(" or val2.isalpha()):
                     return "*"
                 else:
                     return ""
@@ -339,7 +339,7 @@ class Application():
         dx = (int(self.upper_bound) - int(self.lower_bound))/int(self.n)
         c = 0
         xm = 0
-        xmOPERATOR = {"x":xm} 
+
         for i in range(int(self.n)+1):
             xi = i*dx+int(self.lower_bound) 
             fxi = eval(self.converted_function,globals().update({"x":xi}),locals())
@@ -352,7 +352,7 @@ class Application():
                     c = 4
             if i > 0:
                 xm = xi - dx/2
-            #fxm = eval(self.converted_function,{"x":xm})
+
             fxm = eval(self.converted_function,globals().update({"x":xm}),locals())
 
             self.table.append([str(i),str(round(xi,6)),str(round(fxi,6)),str(c),
