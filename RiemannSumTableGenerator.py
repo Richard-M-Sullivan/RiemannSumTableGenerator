@@ -21,6 +21,18 @@ class Application():
         self.upper_bound = ""
         self.lower_bound = ""
         self.converted_function = ""
+        self.L_var = tk.StringVar()
+        self.R_var = tk.StringVar()
+        self.T_var = tk.StringVar()
+        self.M_var = tk.StringVar()
+        self.S_var = tk.StringVar()
+
+        self.L_var.set("nan")
+        self.R_var.set("nan")
+        self.T_var.set("nan")
+        self.M_var.set("nan")
+        self.S_var.set("nan")
+
         
         #initialize gui and widgets
         self.root =  master
@@ -31,45 +43,79 @@ class Application():
 
 
         #create frames and widgets
-
-        self.windowFrame = tk.Frame(padx=30,pady=30)
-
-        self.functionFrame = tk.Frame(master=self.windowFrame)
+        #outermost frame to hold entry and display frame
+        self.windowFrame = tk.Frame(master=self.root,padx=30,pady=30)
+        #holds all of the frames for the entry widgets
+        self.entryFrame = tk.Frame(master=self.windowFrame)
+        #all below are entry frames and widgets
+        self.functionFrame = tk.Frame(master=self.entryFrame)
 
         self.functionLabel = tk.Label(master=self.functionFrame,text="Function:")
         self.functionEntry = tk.Entry(master=self.functionFrame)
 
-        self.nFrame = tk.Frame(master=self.windowFrame)
+        self.nFrame = tk.Frame(master=self.entryFrame)
 
         self.nLabel = tk.Label(master=self.nFrame, text="n:")
         self.nEntry = tk.Entry(master=self.nFrame)
 
-        self.upperBoundFrame = tk.Frame(master=self.windowFrame)
+        self.upperBoundFrame = tk.Frame(master=self.entryFrame)
 
         self.upperBoundLabel = tk.Label(master=self.upperBoundFrame, text="Upper Bound:")
         self.upperBoundEntry = tk.Entry(master=self.upperBoundFrame) 
 
-        self.lowerBoundFrame = tk.Frame(master=self.windowFrame)
+        self.lowerBoundFrame = tk.Frame(master=self.entryFrame)
 
         self.lowerBoundLabel = tk.Label(master=self.lowerBoundFrame, text="Lower Bound:")
         self.lowerBoundEntry = tk.Entry(master=self.lowerBoundFrame)
+        #end entry widgets
+        
+        #holds all of the display frames
+        self.displayFrame = tk.Frame(master=self.windowFrame,padx=30)
+        #display frames and widgets
+        self.lFrame = tk.Frame(master=self.displayFrame)
+
+        self.lLabel = tk.Label(master=self.lFrame,text="L=")
+        self.lAnswerLabel = tk.Label(master=self.lFrame,textvariable=self.L_var)
+
+        self.rFrame = tk.Frame(master=self.displayFrame)
+
+        self.rLabel = tk.Label(master=self.rFrame,text="R=")
+        self.rAnswerLabel = tk.Label(master=self.rFrame,textvariable=self.R_var)
+
+        self.tFrame = tk.Frame(master=self.displayFrame)
+
+        self.tLabel = tk.Label(master=self.tFrame,text="T=")
+        self.tAnswerLabel = tk.Label(master=self.tFrame,textvariable=self.T_var)
+
+        self.mFrame = tk.Frame(master=self.displayFrame)
+
+        self.mLabel = tk.Label(master=self.mFrame,text="M=")
+        self.mAnswerLabel = tk.Label(master=self.mFrame,textvariable=self.M_var)
+
+        self.sFrame = tk.Frame(master=self.displayFrame)
+
+        self.sLabel= tk.Label(master=self.sFrame,text="S=")
+        self.sAnswerLabel= tk.Label(master=self.sFrame,textvariable=self.S_var)
+
 
         self.submitButton = tk.Button(master=self.root,bg="white",text="submit",command=self.calculateValues)
 
         self.tableTree = ttk.Treeview(master=self.root)
         
         #setup the table
-        self.tableTree["columns"] = ["i","f(xi)","C","Cf(xi)","xm","f(xm)"]
+        self.tableTree["columns"] = ["i","xi","f(xi)","C","Cf(xi)","xm","f(xm)"]
         self.tableTree.column("#0"    ,anchor="w",width=0)
-        self.tableTree.column("i"     ,anchor="w",minwidth=25,width=120)
-        self.tableTree.column("f(xi)" ,anchor="w",minwidth=25,width=120)
-        self.tableTree.column("C"     ,anchor="w",minwidth=25,width=120)
-        self.tableTree.column("Cf(xi)",anchor="w",minwidth=25,width=120)
+        self.tableTree.column("i"     ,anchor="w",minwidth=25,width=35)
+        self.tableTree.column("xi"     ,anchor="w",minwidth=25,width=120)
+        self.tableTree.column("f(xi)" ,anchor="w",minwidth=25,width=220)
+        self.tableTree.column("C"     ,anchor="w",minwidth=25,width=25)
+        self.tableTree.column("Cf(xi)",anchor="w",minwidth=25,width=220)
         self.tableTree.column("xm"    ,anchor="w",minwidth=25,width=120)
-        self.tableTree.column("f(xm)" ,anchor="w",minwidth=25,width=120)
+        self.tableTree.column("f(xm)" ,anchor="w",minwidth=25,width=220)
 
         self.tableTree.heading("#0"    ,text=""       ,anchor="w")
         self.tableTree.heading("i"     ,text="i"      ,anchor="w")
+        self.tableTree.heading("xi"    ,text="xi"     ,anchor="w")
         self.tableTree.heading("f(xi)" ,text="f(xi)"  ,anchor="w")
         self.tableTree.heading("C"     ,text="C"      ,anchor="w")
         self.tableTree.heading("Cf(xi)",text="C*f(xi)",anchor="w")
@@ -77,12 +123,22 @@ class Application():
         self.tableTree.heading("f(xm)" ,text="f(xm)"  ,anchor="w")
 
         self.tableTree["show"] = "headings"
+
         # add frames to window
         self.windowFrame.pack(anchor="w")
+
+        self.entryFrame.pack(side="left",anchor="e")
         self.functionFrame.pack(anchor="e")
         self.nFrame.pack(anchor="e")
         self.upperBoundFrame.pack(anchor="e")
         self.lowerBoundFrame.pack(anchor="e")
+
+        self.displayFrame.pack(side="left",anchor="e")
+        self.lFrame.pack(anchor="w")
+        self.rFrame.pack(anchor="w")
+        self.tFrame.pack(anchor="w")
+        self.mFrame.pack(anchor="w")
+        self.sFrame.pack(anchor="w")
 
 
         # add widgets to frames
@@ -98,12 +154,32 @@ class Application():
         self.lowerBoundEntry.pack(side="right")
         self.lowerBoundLabel.pack(side="right")
 
+
+
+        self.lLabel.pack(side="left")
+        self.lAnswerLabel.pack(side="left")
+
+        self.rLabel.pack(side="left")
+        self.rAnswerLabel.pack(side="left")
+
+        self.tLabel.pack(side="left")
+        self.tAnswerLabel.pack(side="left")
+
+        self.mLabel.pack(side="left")
+        self.mAnswerLabel.pack(side="left")
+
+        self.sLabel.pack(side="left")
+        self.sAnswerLabel.pack(side="left")
+
+
+
         self.submitButton.pack(padx=30,pady=(0,30),anchor="w")
-        self.tableTree.pack(pady=(0,30))
+        self.tableTree.pack(padx=30,pady=(0,30))
         #setup complete
         
         #enter the applicaiton main loop to start application
         tk.mainloop()
+
 
     def calculateValues(self):#called by the submit button
         #getting values from the fields
@@ -131,6 +207,7 @@ class Application():
                 self.convert_function()
                 self.generate_table()
                 self.new_tableTree()
+                self.updateLRTMS()
             #if there is an error show the error log
             else:
                 tk.messagebox.showinfo("Response",self.get_error_log())
@@ -146,8 +223,14 @@ class Application():
         good += self.check_lower_bound()
         return good == 0
 
+
     def check_function(self):
-        return 0
+        if len(self.function) == 0:
+            self.append_error_log("you need to specify a function")
+            return 1
+        else:
+            return 0
+
 
     def check_n(self):
         try:
@@ -168,6 +251,7 @@ class Application():
             else:
                 return 0;
 
+
     def check_upper_bound(self):
         try:
             upper = float(self.upper_bound)
@@ -179,6 +263,7 @@ class Application():
             return 1
         else:
             return 0
+
 
     def check_lower_bound(self):
         try:
@@ -203,21 +288,25 @@ class Application():
                     return 1
         return 0
 
+
     def convert_function(self):
         displacement = 0
         function = self.function
         for i in range(len(function)-1):
             val1 = function[i+displacement]
             val2 = function[i+displacement+1]
-            print(function,i,displacement,val1,val2)
             op = self.generate_operator(val1,val2)
 
             if not(op == ""):
-                function = function[0:i+displacement+1]+op+function[i+displacement+1:]
+                if op == "**":
+                    function = function[0:i+displacement]+op+function[i+displacement+1:] 
+                else:
+                    function = function[0:i+displacement+1]+op+function[i+displacement+1:]
                 displacement += 1
 
-        converted_function = function
-                
+        self.converted_function = function
+
+
     def generate_operator(self,val1,val2):
             #if the value is a number
             if val1.isnumeric():
@@ -227,37 +316,80 @@ class Application():
                 #else you need to multiply
                 elif (val2 == "(" or val2 == "x"):
                     return "*"
+                elif (val2.isalpha()):
+                    return "*"
                 else:
                     return""
             #if the first value is a ) or x
             elif val1 == ")" or val1 == "x":
                 #if the second value is not an operator then multiply
-                if val2.isnumeric() or val2=="(" or val2 =="x":
+                if (val2.isnumeric() or val2=="(" or val2.isalpha()):
                     return "*"
                 else:
                     return ""
+            elif val1 == "^":
+                return "**"
             else:
                 return ""
                 
-            
-            
 
     def generate_table(self):
         #the needed fields that the table has to generate are as follows:
         # i, xi, f(xi), c, c(fxi), xm, f(xm)
         self.table=[]
-        self.table.append([self.n,"xi","f(xi)","c","cf(xi)","xm","f(xm)"])
-         
+        dx = (int(self.upper_bound) - int(self.lower_bound))/int(self.n)
+        c = 0
+        xm = 0
+        
+        for i in range(int(self.n)+1):
+            xi = i*dx+int(self.lower_bound) 
+            fxi = eval(self.converted_function,{"x":xi})
+            if(int(self.n) % 2 == 0):
+                if i == 0 or i == int(self.n):
+                    c = 1
+                elif i % 2 == 0:
+                    c = 2
+                else:
+                    c = 4
+            if i > 0:
+                xm = xi - dx/2
+            fxm = eval(self.converted_function,{"x":xm})
+
+            self.table.append([str(i),str(round(xi,6)),str(round(fxi,6)),str(c),
+            str(round(c*fxi,6)),round(xm,6),str(round(fxm,6))])
+            self.table[0][6] = "0"
+
+
     def new_tableTree(self):
         #clear the previous tree
         for record in self.tableTree.get_children():
             self.tableTree.delete(record)
         #insert all the needed data into the new tree
         for row in self.table:    
-            self.tableTree.insert(parent="",index="end",iid="0",values=row)
+            self.tableTree.insert(parent="",index="end",iid=row[0],values=row)
+
+
+    def updateLRTMS(self):
+        dx = (float(self.upper_bound) - float(self.lower_bound)) / int(self.n)
+        fxi_sum = 0
+        cfxi_sum = 0
+        fxm_sum = 0
+        print(self.table[0],dx)
+        
+        for i in range(len(self.table)):
+            fxi_sum += float(self.table[i][2])
+            fxm_sum += float(self.table[i][6])
+            cfxi_sum += float(self.table[i][4])
+
+        self.L_var.set(str(round((fxi_sum - float(self.table[len(self.table)-1][2]))*dx ,6)))
+        self.R_var.set(str(round((fxi_sum - float(self.table[0][2]))*dx ,6)))
+        self.T_var.set(str(round((float(self.L_var.get())+float(self.R_var.get()))/2 ,6)))
+        self.M_var.set(str(round((fxm_sum - float(self.table[0][6]))*dx ,6)))
+        self.S_var.set(str(round((cfxi_sum)*dx/3.0 ,6)))
 
     def clear_error_log(self):
         self.error_log = ""
+
 
     def append_error_log(self,error_string):
         if self.error_log == "":
@@ -265,8 +397,10 @@ class Application():
         else:
             self.error_log += "\n"+error_string
 
+
     def get_error_log(self):
         return self.error_log
+
 
 #create window
 root = tk.Tk()
