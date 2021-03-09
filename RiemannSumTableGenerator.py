@@ -339,12 +339,10 @@ class Application():
         dx = (int(self.upper_bound) - int(self.lower_bound))/int(self.n)
         c = 0
         xm = 0
-        xi = 0
-        xiOPERATOR = {"x":xi} 
         xmOPERATOR = {"x":xm} 
         for i in range(int(self.n)+1):
             xi = i*dx+int(self.lower_bound) 
-            fxi = eval(self.converted_function,globals(),xiOPERATOR)
+            fxi = eval(self.converted_function,globals().update({"x":xi}),locals())
             if(int(self.n) % 2 == 0):
                 if i == 0 or i == int(self.n):
                     c = 1
@@ -355,7 +353,7 @@ class Application():
             if i > 0:
                 xm = xi - dx/2
             #fxm = eval(self.converted_function,{"x":xm})
-            fxm = eval(self.converted_function,globals(),xmOPERATOR)
+            fxm = eval(self.converted_function,globals().update({"x":xm}),locals())
 
             self.table.append([str(i),str(round(xi,6)),str(round(fxi,6)),str(c),
             str(round(c*fxi,6)),round(xm,6),str(round(fxm,6))])
@@ -376,7 +374,6 @@ class Application():
         fxi_sum = 0
         cfxi_sum = 0
         fxm_sum = 0
-        print(self.table[0],dx)
         
         for i in range(len(self.table)):
             fxi_sum += float(self.table[i][2])
